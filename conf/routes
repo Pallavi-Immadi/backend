@@ -29,3 +29,16 @@ GET     /hellos/:name                     controllers.HelloworldController.hello
 POST /Greeting                    controllers.HelloworldController.Greeting()
 
 GET /me         controllers.HelloworldController.me()
+
+#Movie
+POST    /movie                      controllers.MovieController.createMovie()
+DELETE /movie                       controllers.MovieController.deleteMovie()
+GET /movie                          controllers.MovieController.getAllMovies()
+
+
+#Filter
+
+POST    /title                   controllers.FilterController.findByTitle()
+POST    /filter               controllers.FilterController.filter()
+POST    /language                   controllers.FilterController.findByLanguage()
+POST    /genre                   controllers.FilterController.findByGenre()
