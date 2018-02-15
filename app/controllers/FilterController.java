@@ -2,24 +2,18 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.Movie;
-import models.User;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import javax.persistence.EntityManager;
+
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import javax.persistence.*;
+import javax.persistence.criteria.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.Iterator;
-import java.util.List;
-
-import static play.db.jpa.JPA.em;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class FilterController extends Controller {
     private JPAApi jpaApi;
@@ -136,12 +130,96 @@ public class FilterController extends Controller {
     }
 
     @Transactional
-   public Result DynamicQuery(){
+   public Result dynamicQuery(){
 
-        return TODO;
+        final JsonNode jsonNode = request().body().asJson();
+        final Iterator<String> itr = jsonNode.fieldNames();
+        final int i= jsonNode.size();
+
+        Collection<String> names = new ArrayList<>();
+        while (itr.hasNext()) {
+            String name = itr.next();
+            names.add(name);
+        }
+
+
+        CriteriaBuilder builder = jpaApi.em().getCriteriaBuilder();
+
+        CriteriaQuery criteriaQuery = builder.createQuery();
+
+        Root<Movie> movie = criteriaQuery.from(Movie.class);
+
+        List<Predicate> genres = new ArrayList<Predicate>();
+
+        List<Predicate> languages = new ArrayList<Predicate>();
+
+
+        genres.add(builder.like(movie.get("genre"),"Action"));
+        genres.add(builder.like(movie.get("genre"),"Comedy"));
+        genres.add(builder.like(movie.get("language"),"English"));
+
+        /*for (String name : names) {
+
+            if(jsonNode.get(name).asText().contains(","))
+            {
+                if(name=="genre") {
+                    String[] newNames = name.split(",");
+                    for (String newName : newNames) {
+                        System.out.println(jsonNode.get(newName).asText());
+                      genres.add(builder.like(movie.get(newName), '%' + jsonNode.get(newName).asText() + '%'));
+                    }
+                }
+                else{
+                    String[] newNames = name.split(",");
+                    for (String newName : newNames) {
+                        System.out.println(jsonNode.get(newName).asText());
+                       languages.add(builder.like(movie.get(newName), '%' + jsonNode.get(newName).asText() + '%'));
+                    }
+                }
+
+
+            }
+            else
+            {
+                if(name=="genre")
+                 genres.add(builder.like(movie.get(name),'%'+jsonNode.get(name).asText()+'%'));
+
+                else
+                  languages.add(builder.like(movie.get(name),'%'+jsonNode.get(name).asText()+'%'));
+
+
+            }
+        }*/
+
+
+        Predicate[] genre_collection =genres.toArray(new Predicate[genres.size()]);
+
+        Predicate com_genre=builder.or(genre_collection);
+
+        Predicate[] language_collection =genres.toArray(new Predicate[languages.size()]);
+
+        Predicate com_language=builder.or(language_collection);
+
+        Predicate pFinal=builder.and(com_genre,com_language);
+
+        criteriaQuery.select(movie).where(pFinal);
 
 
 
-      }
+        TypedQuery<Movie> query = jpaApi.em().createQuery(criteriaQuery);
+
+        System.out.println(query.getResultList());
+
+        List<Movie> results = query.getResultList();
+        final JsonNode jsonNode1 = Json.toJson(results);
+
+
+        System.out.println(results);
+        return ok(jsonNode1);
+
+
+    }
 
 }
+
+

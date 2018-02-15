@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 public class User{
 
+
     @Id
     String uname;
 

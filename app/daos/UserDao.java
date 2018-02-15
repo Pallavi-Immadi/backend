@@ -9,6 +9,7 @@ import java.util.List;
 
 public class UserDao {
 
+
     private JPAApi jpaApi;
 
     @Inject

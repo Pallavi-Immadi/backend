@@ -1,8 +1,10 @@
 package models;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
+
 public class Movie{
 
     @Id
@@ -18,7 +20,7 @@ public class Movie{
     String runtime;
 
     @Basic
-    Integer year;
+    Date date;
 
     @Basic
     String genre;
@@ -39,16 +41,43 @@ public class Movie{
     String poster;
 
 
+  /*  @Basic
+    Long views;
 
-    public Movie()
-    {}
-
-    public Movie(String imdbID, String title, String certification, String runtime, Integer year, String genre, String director, String actors, String plot, String language, String poster) {
+    public Movie(String imdbID, String title, String certification, String runtime, Integer year, String genre, String director, String actors, String plot, String language, String poster, Long views) {
         this.imdbID = imdbID;
         this.title = title;
         this.certification = certification;
         this.runtime = runtime;
         this.year = year;
+        this.genre = genre;
+        this.director = director;
+        this.actors = actors;
+        this.plot = plot;
+        this.language = language;
+        this.poster = poster;
+        this.views = views;
+    }
+
+    public Long getViews() {
+
+        return views;
+    }
+
+    public void setViews(Long views) {
+        this.views = views;
+    }
+    */
+
+    public Movie()
+    {}
+
+    public Movie(String imdbID, String title, String certification, String runtime, Date date, String genre, String director, String actors, String plot, String language, String poster) {
+        this.imdbID = imdbID;
+        this.title = title;
+        this.certification = certification;
+        this.runtime = runtime;
+        this.date = date;
         this.genre = genre;
         this.director = director;
         this.actors = actors;
@@ -74,13 +103,6 @@ public class Movie{
         this.title = title;
     }
 
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
 
     public String getGenre() {
         return genre;
@@ -144,5 +166,13 @@ public class Movie{
 
     public void setRuntime(String runtime) {
         this.runtime = runtime;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

@@ -36,9 +36,16 @@ DELETE /movie                       controllers.MovieController.deleteMovie()
 GET /movie                          controllers.MovieController.getAllMovies()
 
 
+
 #Filter
 
 POST    /title                   controllers.FilterController.findByTitle()
 POST    /filter               controllers.FilterController.filter()
-POST    /language                   controllers.FilterController.findByLanguage()
+POST    /language                   controllers.FilterController.dynamicQuery()
 POST    /genre                   controllers.FilterController.findByGenre()
+
+
+#Homepage Controller
+
+GET /getLatestMovies           controllers.HomepageController.latestMovies()
+PUT /getViews                                controllers.ViewsController.updateViews()

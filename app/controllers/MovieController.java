@@ -15,6 +15,9 @@ import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import java.awt.*;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MovieController extends Controller {
@@ -30,10 +33,13 @@ public class MovieController extends Controller {
     @Transactional
     public Result createMovie() {
 
+        SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");
+
         final JsonNode jsonNode = request().body().asJson();
         final String imdbID = jsonNode.get("imdbID").asText();
         final String title = jsonNode.get("Title").asText();
-        final Integer year = jsonNode.get("Year").asInt();
+        //final Date date = formatter1.parse((jsonNode.get("Date").toString()),new ParsePosition(0));
+        final String date=jsonNode.get("Date").asText();
         final String certification=jsonNode.get("Rated").asText();
         final String runtime=jsonNode.get("Runtime").asText();
         final String genre = jsonNode.get("Genre").asText();
@@ -45,31 +51,10 @@ public class MovieController extends Controller {
 
 
 
-
-
-
-        /*if (null == username) {
-            return badRequest("Missing user name");
-        }
-        if (null == password) {
-            return badRequest("Missing password");
-        }
-        if (null == role) {
-            return badRequest("Missing role");
-        }
-        // if (null == phone) {
-        //return badRequest("Missing contact number");
-        // }
-        if (null == proname) {
-            return badRequest("Missing profile name");
-        }*/
-
-
-
         Movie movie = new Movie();
         movie.setImdbID(imdbID);
         movie.setTitle(title);
-        movie.setYear(year);
+        movie.setDate(formatter1.parse(date,new ParsePosition(0)));
         movie.setCertification(certification);
         movie.setRuntime(runtime);
         movie.setGenre(genre);
@@ -81,6 +66,8 @@ public class MovieController extends Controller {
 
 
         movie=movieDao.persist(movie);
+
+        System.out.println(formatter1.parse(date,new ParsePosition(0)));
 
         return created("Movie created");
 
@@ -121,5 +108,7 @@ public class MovieController extends Controller {
         return ok(jsonNode);
 
     }
+
+
 
 }
