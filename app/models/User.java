@@ -1,21 +1,41 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 
 @Entity
 public class User{
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public enum Role {
+        Admin,
+        User
+    }
+
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Integer id;
+
+
+    @Basic
     String uname;
 
     @Basic
     String pwd;
 
     @Basic
-    String role;
+    Role role;
 
     @Basic
     Long phone;
@@ -23,15 +43,62 @@ public class User{
     @Basic
     String proname;
 
+    @Basic
+    String token;
+    @Basic
+    Long threshold;
+
+    @Basic
+    String salt;
+
+    @Basic
+    String reftoken;
 
 
-    public User(String uname, String pwd,String role,Long phone,String proname) {
+    public User(Integer id, String uname, String pwd, Role role, Long phone, String proname, String token, Long threshold, String salt, String reftoken) {
+        this.id = id;
         this.uname = uname;
         this.pwd = pwd;
-        this.role=role;
-        this.phone=phone;
-        this.proname=proname;
+        this.role = role;
+        this.phone = phone;
+        this.proname = proname;
+        this.token = token;
+        this.threshold = threshold;
+        this.salt = salt;
+        this.reftoken = reftoken;
     }
+
+
+    public User(String uname){
+        this.uname = uname;
+    }
+
+    public Long getThreshold() {
+
+        return threshold;
+    }
+
+    public void setThreshold(Long threshold) {
+        this.threshold = threshold;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getReftoken() {
+        return reftoken;
+    }
+
+    public void setReftoken(String reftoken) {
+        this.reftoken = reftoken;
+    }
+
+
 
     public User(){}
 
@@ -52,11 +119,11 @@ public class User{
         this.pwd = pwd;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -75,4 +142,11 @@ public class User{
     public void setProname(String proname) {
         this.proname = proname;
     }
+
+    public void setToken(String token){this.token = token; }
+
+    @JsonIgnore
+    public String getToken(){ return  token; }
+
+
 }

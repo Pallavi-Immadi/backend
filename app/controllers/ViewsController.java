@@ -9,6 +9,7 @@ import models.Views;
 import play.Logger;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -16,7 +17,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.ResultSet;
-import java.util.List;
+import java.util.*;
 
 public class ViewsController extends Controller{
 
@@ -39,30 +40,40 @@ public class ViewsController extends Controller{
         final JsonNode jsonNode = request().body().asJson();
         final String imdbID = jsonNode.get("imdbID").asText();
 
-
-         String sql="select views from Views where imdbID="+movieDao.findById(imdbID)+";";
-         Query query=jpaApi.em().createNativeQuery(sql);
-         List<Views> result = query.getResultList();
+        Views view=viewsDao.findById(imdbID);
 
 
-        Views view=new Views();
-        Movie movie=new Movie();
+         if (null == view) {
+             Views newView = new Views();
+             newView.setId(imdbID);
+             newView.setImdbID(movieDao.findById(imdbID));
+             newView.setViews(1);
+             newView = viewsDao.persist(newView);
 
-       //Integer count=query.getFirstResult();
-         if( result.isEmpty())
-         { //view.setId();
-            view.setImdbID(movieDao.findById(imdbID));
-            view.setViews(1);
          }
-         else
-         {
-             Query query1=jpaApi.em().createNativeQuery("update Views set views=views+1 where imdbID='"+imdbID+"';");
+         else {
+
+             view.setViews(view.getViews()+1);
          }
 
-        view=viewsDao.persist(view);
-
-      //  return created(user.getUname() + "This is your username");
-        return ok("");
+        return ok("view updated");
 
     }
+
+   /* @Transactional
+    public Result getMostPopularByGenre(){
+
+
+         Map<String,Map> map = viewsDao.findViewsByGenre();
+         Collection<Map> map1 = map.values();
+         Map<String,Integer> map3=new TreeMap<String,Integer>(map1);
+
+
+
+        final JsonNode jsonNode = Json.toJson(map3);
+
+        return ok(jsonNode);
+
+
+    }*/
 }

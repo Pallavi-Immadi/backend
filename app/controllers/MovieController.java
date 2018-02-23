@@ -1,8 +1,12 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.security.Authenticator;
+import controllers.security.IsAdmin;
 import daos.MovieDao;
+import daos.ViewsDao;
 import models.Movie;
+import models.Views;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -23,14 +27,19 @@ import java.util.List;
 public class MovieController extends Controller {
 
     private MovieDao movieDao;
+    private ViewsDao viewsDao;
 
     @Inject
-    public MovieController (MovieDao movieDao) {
+    public MovieController (MovieDao movieDao,ViewsDao viewsDao) {
         this.movieDao = movieDao;
+        this.viewsDao = viewsDao;
+
     }
 
 
     @Transactional
+    @IsAdmin
+
     public Result createMovie() {
 
         SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");
@@ -38,7 +47,6 @@ public class MovieController extends Controller {
         final JsonNode jsonNode = request().body().asJson();
         final String imdbID = jsonNode.get("imdbID").asText();
         final String title = jsonNode.get("Title").asText();
-        //final Date date = formatter1.parse((jsonNode.get("Date").toString()),new ParsePosition(0));
         final String date=jsonNode.get("Date").asText();
         final String certification=jsonNode.get("Rated").asText();
         final String runtime=jsonNode.get("Runtime").asText();
@@ -74,18 +82,14 @@ public class MovieController extends Controller {
     }
 
     @Transactional
-    public Result deleteMovie(){
 
-        final JsonNode jsonNode = request().body().asJson();
-        final String imdbID = jsonNode.get("imdbID").asText();
+    public Result deleteMovie(String imdbID){
 
-        if (null == imdbID) {
-            return badRequest("Missing imdbID");
-        }
+        Views views  = viewsDao.deleteViews(imdbID);
 
         final Movie movie = movieDao.deleteMovie(imdbID);
 
-        if(null==movie){
+        if(null == movie){
             return notFound("movie with the following imdbID not found"+imdbID);
         }
 
@@ -108,6 +112,16 @@ public class MovieController extends Controller {
         return ok(jsonNode);
 
     }
+
+    @Transactional
+    public Result getMovieByID(String imdbID){
+
+        Movie movie=movieDao.findById(imdbID);
+
+        final JsonNode json = Json.toJson(movie);
+        return ok(json);
+    }
+
 
 
 

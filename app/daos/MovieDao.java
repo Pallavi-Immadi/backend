@@ -3,7 +3,9 @@ package daos;
 import models.Movie;
 import play.db.jpa.JPAApi;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDao{
@@ -39,6 +41,25 @@ public class MovieDao{
 
         final Movie movie = jpaApi.em().find(Movie.class, imdbID);
         return movie;
+
+    }
+
+   public List<String> findGenre(String imdbID){
+
+           Movie movie=findById(imdbID);
+
+           List<String> genreList = new ArrayList<>();
+           String genre=movie.getGenre();
+           String[] genres=genre.split(", ");
+           for(String gen:genres)
+           {
+               genreList.add(gen);
+           }
+
+
+
+        return genreList;
+
 
     }
 

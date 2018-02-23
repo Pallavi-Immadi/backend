@@ -1,30 +1,13 @@
 package models;
 
 
-import scala.Int;
-
 import javax.persistence.*;
 
 @Entity
 public class Views {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
-
-    public Views(Integer id, Movie imdbID, Integer views) {
-        this.id = id;
-        this.imdbID = imdbID;
-        this.views = views;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    String id;
 
     @OneToOne
     Movie imdbID;
@@ -34,6 +17,12 @@ public class Views {
 
 
     public Views(){}
+
+    public Views(String id, Movie imdbID, Integer views) {
+        this.id = id;
+        this.imdbID = imdbID;
+        this.views = views;
+    }
 
     public Movie getImdbID() {
         return imdbID;
@@ -49,5 +38,13 @@ public class Views {
 
     public void setViews(Integer views) {
         this.views = views;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

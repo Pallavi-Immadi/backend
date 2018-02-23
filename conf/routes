@@ -19,6 +19,9 @@ POST    /user                       controllers.AdminController.createUser()
 DELETE /user              controllers.AdminController.deleteUser()
 GET /user                              controllers.AdminController.getAllUsers()
 POST     /userver                       controllers.LoginController.verify()
+GET /reftoken/:reftoken             controllers.LoginController.verifyRefreshToken(reftoken: String)
+GET /cuser                             controllers.LoginController.getCurrentUser()
+
 
 
 #HelloWorld
@@ -32,9 +35,9 @@ GET /me         controllers.HelloworldController.me()
 
 #Movie
 POST    /movie                      controllers.MovieController.createMovie()
-DELETE /movie                       controllers.MovieController.deleteMovie()
+DELETE /movie/:imdbID                      controllers.MovieController.deleteMovie(imdbID:String)
 GET /movie                          controllers.MovieController.getAllMovies()
-
+GET /movie/:imdbID                       controllers.MovieController.getMovieByID(imdbID:String)
 
 
 #Filter
@@ -48,4 +51,16 @@ POST    /genre                   controllers.FilterController.findByGenre()
 #Homepage Controller
 
 GET /getLatestMovies           controllers.HomepageController.latestMovies()
-PUT /getViews                                controllers.ViewsController.updateViews()
+GET /getPopularMovies            controllers.HomepageController.mostPopular()
+
+#Views Controller
+PUT /updateViews                               controllers.ViewsController.updateViews()
+#GET /getMostPopularByGenre                     controllers.ViewsController.getMostPopularByGenre()
+
+#Ratingscontroller
+
+POST /insertRatings            controllers.RatingsController.insertRatings()
+GET /getRecommendations/:token        controllers.RatingsController.findPersonalizedRecommendations(token:String)
+
+
+
