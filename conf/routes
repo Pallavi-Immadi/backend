@@ -16,51 +16,75 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 #Login
 POST    /user                       controllers.AdminController.createUser()
++nocsrf
 DELETE /user              controllers.AdminController.deleteUser()
-GET /user                              controllers.AdminController.getAllUsers()
-POST     /userver                       controllers.LoginController.verify()
-GET /reftoken/:reftoken             controllers.LoginController.verifyRefreshToken(reftoken: String)
-GET /cuser                             controllers.LoginController.getCurrentUser()
-
-
+GET /user                             controllers.AdminController.getAllUsers()
+POST     /userver                     controllers.LoginController.verify()
+GET /reftoken/:reftoken               controllers.LoginController.verifyRefreshToken(reftoken: String)
+#GET /cuser                           controllers.LoginController.getCurrentUser()
++noscrf
+PUT /changepwd                        controllers.LoginController.changePassword()
+GET /user/forgotP/:uname              controllers.LoginController.forgotPassword(uname: String)
+POST /resetPwd                        controllers.LoginController.resetPassword()
 
 #HelloWorld
-GET     /HelloWorld                         controllers.HelloworldController.HelloWorld
-GET     /hello/:name                       controllers.HelloworldController.hello(name:String)
-GET     /hellos/:name                     controllers.HelloworldController.hellos(name:String,count:Integer)
+GET     /HelloWorld                   controllers.HelloworldController.HelloWorld
+GET     /hello/:name                  controllers.HelloworldController.hello(name:String)
+GET     /hellos/:name                 controllers.HelloworldController.hellos(name:String,count:Integer)
 
-POST /Greeting                    controllers.HelloworldController.Greeting()
+POST /Greeting                        controllers.HelloworldController.Greeting()
 
 GET /me         controllers.HelloworldController.me()
 
 #Movie
-POST    /movie                      controllers.MovieController.createMovie()
-DELETE /movie/:imdbID                      controllers.MovieController.deleteMovie(imdbID:String)
-GET /movie                          controllers.MovieController.getAllMovies()
-GET /movie/:imdbID                       controllers.MovieController.getMovieByID(imdbID:String)
++nocsrf
+POST    /movie                       controllers.MovieController.createMovie()
++noscrf
+DELETE /movie/:imdbID                controllers.MovieController.deleteMovie(imdbID:String)
+GET /movies                          controllers.MovieController.getAllMovies()
++nocsrf
+POST /singlemovie                    controllers.MovieController.getMovieByID()
 
 
 #Filter
 
-POST    /title                   controllers.FilterController.findByTitle()
-POST    /filter               controllers.FilterController.filter()
+POST    /title                      controllers.FilterController.findByTitle()
+POST    /filter                     controllers.FilterController.filter()
 POST    /language                   controllers.FilterController.dynamicQuery()
-POST    /genre                   controllers.FilterController.findByGenre()
+POST    /genre                      controllers.FilterController.findByGenre()
 
 
 #Homepage Controller
 
-GET /getLatestMovies           controllers.HomepageController.latestMovies()
-GET /getPopularMovies            controllers.HomepageController.mostPopular()
+GET /getLatestMovies                controllers.HomepageController.latestMovies()
+GET /getPopularMovies               controllers.RatingsController.mostPopular()
+
 
 #Views Controller
-PUT /updateViews                               controllers.ViewsController.updateViews()
-#GET /getMostPopularByGenre                     controllers.ViewsController.getMostPopularByGenre()
+PUT /updateViews/:imdbID            controllers.ViewsController.updateViews(imdbID:String)
+#GET /getMostPopularByGenre         controllers.ViewsController.getMostPopularByGenre()
 
 #Ratingscontroller
++nocsrf
+POST /insertRatings                 controllers.RatingsController.insertRatings()
++nocsrf
+GET /getRecommendations             controllers.RatingsController.findPersonalizedRecommendations()
+GET /mostPopular                    controllers.RatingsController.mostPopular()
 
-POST /insertRatings            controllers.RatingsController.insertRatings()
-GET /getRecommendations/:token        controllers.RatingsController.findPersonalizedRecommendations(token:String)
+
+# ImageController
+
+POST /images                        controllers.ImageController.uploadImage()
+GET /images/:id                     controllers.ImageController.downloadImage(id: String)
+DELETE /images/:id                  controllers.ImageController.deleteImage(id: String)
+
+
+
+#ContactUs
+POST      /contact                            controllers.ContactController.sendMail()
+
+#Recommendation Controller
+GET /generateRecommendations                 controllers.RecommendationController.generateRecommendations()
 
 
 

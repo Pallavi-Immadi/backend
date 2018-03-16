@@ -1,7 +1,10 @@
 package controllers;
 
+import ch.qos.logback.classic.spi.LoggerRemoteView;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.Movie;
+import org.hibernate.jpa.criteria.predicate.CompoundPredicate;
+import play.Logger;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -61,6 +64,7 @@ public class FilterController extends Controller {
 
     @Transactional
     public Result findByLanguage() {
+
 
 
         final JsonNode jsonNode = request().body().asJson();
@@ -153,27 +157,27 @@ public class FilterController extends Controller {
 
         List<Predicate> languages = new ArrayList<Predicate>();
 
+        //genres.add(builder.like(movie.get("genre"),"Action"));
+        //genres.add(builder.like(movie.get("genre"),"Comedy"));
+        //genres.add(builder.like(movie.get("language"),"English"));
 
-        genres.add(builder.like(movie.get("genre"),"Action"));
-        genres.add(builder.like(movie.get("genre"),"Comedy"));
-        genres.add(builder.like(movie.get("language"),"English"));
-
-        /*for (String name : names) {
+        for (String name : names) {
 
             if(jsonNode.get(name).asText().contains(","))
             {
                 if(name=="genre") {
-                    String[] newNames = name.split(",");
+                    String[] newNames = jsonNode.get(name).asText().split(",");
+
                     for (String newName : newNames) {
-                        System.out.println(jsonNode.get(newName).asText());
-                      genres.add(builder.like(movie.get(newName), '%' + jsonNode.get(newName).asText() + '%'));
+                       Logger.debug(newName);
+                      genres.add(builder.like(movie.get(name), '%' + newName + '%'));
                     }
                 }
                 else{
-                    String[] newNames = name.split(",");
+                    String[] newNames = jsonNode.get(name).asText().split(",");
                     for (String newName : newNames) {
-                        System.out.println(jsonNode.get(newName).asText());
-                       languages.add(builder.like(movie.get(newName), '%' + jsonNode.get(newName).asText() + '%'));
+                        Logger.debug(newName);
+                       languages.add(builder.like(movie.get(name), '%' + newName + '%'));
                     }
                 }
 
@@ -181,27 +185,40 @@ public class FilterController extends Controller {
             }
             else
             {
-                if(name=="genre")
-                 genres.add(builder.like(movie.get(name),'%'+jsonNode.get(name).asText()+'%'));
+                if(name=="genre"){
+                    genres.add(builder.like(movie.get(name),'%'+jsonNode.get(name).asText()+'%'));
+                Logger.debug(jsonNode.get(name).asText());}
 
-                else
+                else{
                   languages.add(builder.like(movie.get(name),'%'+jsonNode.get(name).asText()+'%'));
+                Logger.debug(jsonNode.get(name).asText());}
 
 
             }
-        }*/
+        }
 
 
         Predicate[] genre_collection =genres.toArray(new Predicate[genres.size()]);
 
         Predicate com_genre=builder.or(genre_collection);
 
-        Predicate[] language_collection =genres.toArray(new Predicate[languages.size()]);
+        Predicate[] language_collection =languages.toArray(new Predicate[languages.size()]);
 
         Predicate com_language=builder.or(language_collection);
 
-        Predicate pFinal=builder.and(com_genre,com_language);
+        Predicate pFinal;
 
+
+
+        if(genres.isEmpty()) {
+            pFinal = builder.or(language_collection);
+        }
+        else if(languages.isEmpty())
+             pFinal=builder.or(genre_collection);
+        else
+             pFinal=builder.and(com_language,com_genre);
+
+        Logger.debug(pFinal+"");
         criteriaQuery.select(movie).where(pFinal);
 
 

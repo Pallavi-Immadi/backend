@@ -14,7 +14,7 @@ public class Ratings {
     Integer userId;
 
     @Basic
-    Integer rating;
+    Float rating;
 
     @Basic
     String movieId;
@@ -22,7 +22,7 @@ public class Ratings {
 
     public Ratings(){}
 
-    public Ratings(Integer id, Integer userId, Integer rating, String movieId) {
+    public Ratings(Integer id, Integer userId, float rating, String movieId) {
         this.id = id;
         this.userId = userId;
         this.rating = rating;
@@ -45,11 +45,11 @@ public class Ratings {
         this.userId = userId;
     }
 
-    public Integer getRating() {
+    public Float getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

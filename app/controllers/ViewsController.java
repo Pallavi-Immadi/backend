@@ -33,6 +33,7 @@ public class ViewsController extends Controller{
     }
 
 
+    /*
     @Transactional
     public Result updateViews() {
 
@@ -43,22 +44,53 @@ public class ViewsController extends Controller{
         Views view=viewsDao.findById(imdbID);
 
 
-         if (null == view) {
-             Views newView = new Views();
-             newView.setId(imdbID);
-             newView.setImdbID(movieDao.findById(imdbID));
-             newView.setViews(1);
-             newView = viewsDao.persist(newView);
+        if (null == view) {
+            Views newView = new Views();
+            newView.setId(imdbID);
+            newView.setImdbID(movieDao.findById(imdbID));
+            newView.setViews(1);
+            newView = viewsDao.persist(newView);
 
-         }
-         else {
+        }
+        else {
 
-             view.setViews(view.getViews()+1);
-         }
+            view.setViews(view.getViews()+1);
+        }
 
         return ok("view updated");
 
     }
+    */
+
+
+    @Transactional
+    public Result updateViews(String imdbID) {
+
+
+       // final JsonNode jsonNode = request().body().asJson();
+        //final String imdbID = jsonNode.get("imdbID").asText();
+
+        Views view=viewsDao.findById(imdbID);
+
+
+        if (null == view) {
+            Views newView = new Views();
+            newView.setId(imdbID);
+            newView.setImdbID(movieDao.findById(imdbID));
+            newView.setViews(1);
+            newView = viewsDao.persist(newView);
+
+        }
+        else {
+
+            view.setViews(view.getViews()+1);
+        }
+
+        return ok("view updated");
+
+    }
+
+
 
    /* @Transactional
     public Result getMostPopularByGenre(){

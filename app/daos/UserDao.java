@@ -6,6 +6,7 @@ import models.User;
 import play.Logger;
 import play.db.jpa.JPAApi;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -28,24 +29,25 @@ public class UserDao {
 
     public User deleteUser(String username) {
 
-        final User user = findById(username);
+        final User user = findUserByName(username);
         if (null == user) {
             return null;
         }
 
         jpaApi.em().remove(user);
+        Query query=jpaApi.em().createQuery("delete from Ratings where userId="+user.getId());
 
         return user;
     }
 
 
 
-    public User findById(String username) {
+   /* public User findById(String username) {
 
-        final User user = jpaApi.em().find(User.class, username);
+        final User user = jpaApi.em().find(User.class, username);//Id cannot be a string hence using findUserbyName()
         return user;
 
-    }
+    */
 
 
     public JsonNode findByName(String username) {
@@ -92,6 +94,22 @@ public class UserDao {
         return result1.get(0);
 
     }
+
+
+    public User findUserByName(String username) {
+
+        TypedQuery<User> query = jpaApi.em().createQuery("select u from User u where uname='" + username + "'", User.class);
+        final List<User> Result = query.getResultList();
+
+        if (Result.size() == 0) {
+            return null;
+        }
+
+        return Result.get(0);
+
+    }
+
+
 
 
 

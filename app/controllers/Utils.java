@@ -68,7 +68,7 @@ public class Utils {
     static public Long generateThreshold() {
 
         long generatedTime = Calendar.getInstance().getTimeInMillis();
-        long threshold=generatedTime+3600;
+        long threshold=generatedTime + 1500000;       //setting 25 minutes as the threshold time
 
         return threshold;
     }

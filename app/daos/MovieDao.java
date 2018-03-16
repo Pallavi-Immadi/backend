@@ -44,19 +44,17 @@ public class MovieDao{
 
     }
 
-   public List<String> findGenre(String imdbID){
+    public List<String> findGenre(String imdbID){
 
-           Movie movie=findById(imdbID);
+        Movie movie=findById(imdbID);
 
-           List<String> genreList = new ArrayList<>();
-           String genre=movie.getGenre();
-           String[] genres=genre.split(", ");
-           for(String gen:genres)
-           {
-               genreList.add(gen);
-           }
-
-
+        List<String> genreList = new ArrayList<>();
+        String genre=movie.getGenre();
+        String[] genres=genre.split(", ");
+        for(String gen:genres)
+        {
+            genreList.add(gen);
+        }
 
         return genreList;
 
@@ -73,4 +71,5 @@ public class MovieDao{
     }
 
 }
+
 

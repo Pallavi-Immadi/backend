@@ -2,6 +2,7 @@ package models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.persistence.*;
 
@@ -37,6 +38,8 @@ public class User{
     @Basic
     Role role;
 
+
+
     @Basic
     Long phone;
 
@@ -55,6 +58,13 @@ public class User{
     String reftoken;
 
 
+
+
+    /*@Basic
+    Boolean verified;
+    */
+
+
     public User(Integer id, String uname, String pwd, Role role, Long phone, String proname, String token, Long threshold, String salt, String reftoken) {
         this.id = id;
         this.uname = uname;
@@ -66,6 +76,7 @@ public class User{
         this.threshold = threshold;
         this.salt = salt;
         this.reftoken = reftoken;
+      //  this.verified = verified;
     }
 
 
@@ -144,6 +155,17 @@ public class User{
     }
 
     public void setToken(String token){this.token = token; }
+
+
+
+   /* public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+    */
 
     @JsonIgnore
     public String getToken(){ return  token; }

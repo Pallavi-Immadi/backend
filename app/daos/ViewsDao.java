@@ -1,11 +1,11 @@
 package daos;
 
 
-
-
+import com.fasterxml.jackson.databind.JsonNode;
 import models.Movie;
 import models.Views;
 import play.db.jpa.JPAApi;
+import play.mvc.Result;
 
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
@@ -20,9 +20,9 @@ public class ViewsDao {
     private MovieDao movieDao;
 
     @Inject
-    public ViewsDao(JPAApi jpaApi,MovieDao movieDao) {
+    public ViewsDao(JPAApi jpaApi, MovieDao movieDao) {
         this.jpaApi = jpaApi;
-        this.movieDao=movieDao;
+        this.movieDao = movieDao;
     }
 
     public Views persist(Views views) {
@@ -33,7 +33,6 @@ public class ViewsDao {
     }
 
 
-
     public Views findById(String imdbID) {
 
         final Views views = jpaApi.em().find(Views.class, imdbID);
@@ -42,23 +41,34 @@ public class ViewsDao {
     }
 
 
-    public Map<String,Map> findViewsByGenre(){
+    public Map<String, Map> findViewsByGenre() {
 
         List<Views> views = findAll();
 
-        Map<String,Map> map= new HashMap<>();
-        List<String> genreList=new ArrayList<>();
-        for(Views view:views) {
-            genreList = movieDao.findGenre(view.getId());
-            for (String genre : genreList) {
+        Map<String, Map> map = new HashMap<>();
+        List<String> genreList = new ArrayList<>();
+        List<String> genreList1 = new ArrayList<>();
+
+
+        for (Views view : views) {
+
+          // genreList =  view.getImdbID().getGenre();
+                String genre=view.getImdbID().getGenre();
+                String[] genres=genre.split(", ");
+                for(String gen:genres)
+                {
+                    genreList1.add(gen);
+                }
+
+                for (String genre1 : genreList1) {
                 Map<String, Integer> map1 = new HashMap<>();
-                if (map.containsKey(genre)) {
-                    Map<String, Integer> map2 = map.get(genre);
-                    map2.put(view.getId(), view.getViews());
-                    map.put(genre, map2);
-                } else {
+                if (map.containsKey(genre1)) {
+                    map1 = map.get(genre1);
                     map1.put(view.getId(), view.getViews());
-                    map.put(genre, map1);
+                    map.put(genre1, map1);
+                }else {
+                    map1.put(view.getId(), view.getViews());
+                    map.put(genre1, map1);
                 }
             }
         }
@@ -75,7 +85,7 @@ public class ViewsDao {
 
     public Views deleteViews(String imdbID) {
 
-        final Views views=findById(imdbID);
+        final Views views = findById(imdbID);
 
         if (null == views) {
             return null;
@@ -85,5 +95,11 @@ public class ViewsDao {
 
         return views;
     }
+
+
+
+
+
+
 
 }

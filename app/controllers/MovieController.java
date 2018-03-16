@@ -1,12 +1,16 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.security.Authenticator;
 import controllers.security.IsAdmin;
 import daos.MovieDao;
+import daos.RatingsDao;
 import daos.ViewsDao;
 import models.Movie;
+import models.User;
 import models.Views;
+import play.Logger;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -22,22 +26,31 @@ import java.awt.*;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class MovieController extends Controller {
 
     private MovieDao movieDao;
     private ViewsDao viewsDao;
+    private RatingsDao ratingsDao;
+    private  ViewsController viewsController;
+
+    private List<Movie> topRatedMovies = new LinkedList<>();
 
     @Inject
-    public MovieController (MovieDao movieDao,ViewsDao viewsDao) {
+    public MovieController (MovieDao movieDao, ViewsDao viewsDao,ViewsController viewsController,RatingsDao ratingsDao) {
         this.movieDao = movieDao;
         this.viewsDao = viewsDao;
+        this.viewsController = viewsController;
+        this.ratingsDao = ratingsDao;
 
     }
 
 
     @Transactional
+    @Authenticator
     @IsAdmin
 
     public Result createMovie() {
@@ -82,7 +95,8 @@ public class MovieController extends Controller {
     }
 
     @Transactional
-
+    @Authenticator
+    @IsAdmin
     public Result deleteMovie(String imdbID){
 
         Views views  = viewsDao.deleteViews(imdbID);
@@ -103,6 +117,7 @@ public class MovieController extends Controller {
     }
 
     @Transactional
+   //@Authenticator //is working
     public Result getAllMovies(){
 
         final List<Movie> movies = movieDao.findAll();
@@ -113,12 +128,30 @@ public class MovieController extends Controller {
 
     }
 
-    @Transactional
-    public Result getMovieByID(String imdbID){
 
+
+
+    @Transactional
+  //  @Authenticator// authenticator is working
+    public Result getMovieByID() {
+
+        Float rating = null;
+        final JsonNode jsonNode = request().body().asJson();
+        final String imdbID = jsonNode.get("imdbID").asText();
+        Logger.debug("" + imdbID);
+
+        if(null == imdbID){
+            return noContent();
+        }
+
+        final User user = (User) ctx().args.get("user");
+        viewsController.updateViews(imdbID);
+
+        rating = ratingsDao.getRatingforSingleMovie(imdbID,user.getId());
         Movie movie=movieDao.findById(imdbID);
 
-        final JsonNode json = Json.toJson(movie);
+        JsonNode json = Json.toJson(movie);
+        ((ObjectNode)json).put("userRating",rating);
         return ok(json);
     }
 

@@ -84,6 +84,7 @@ public class AdminController extends Controller {
             user.setPwd(hashedPassword);
             user.setPhone(phone);
             user.setProname(proname);
+            user.setRole(User.Role.User);
 
 
             userDao.persist(user);
@@ -99,8 +100,8 @@ public class AdminController extends Controller {
 
 
     @Transactional
-
-
+    @Authenticator
+    @IsAdmin
     public Result deleteUser(){
 
         final JsonNode jsonNode = request().body().asJson();
