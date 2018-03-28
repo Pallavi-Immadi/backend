@@ -33,43 +33,11 @@ public class ViewsController extends Controller{
     }
 
 
-    /*
-    @Transactional
-    public Result updateViews() {
-
-
-        final JsonNode jsonNode = request().body().asJson();
-        final String imdbID = jsonNode.get("imdbID").asText();
-
-        Views view=viewsDao.findById(imdbID);
-
-
-        if (null == view) {
-            Views newView = new Views();
-            newView.setId(imdbID);
-            newView.setImdbID(movieDao.findById(imdbID));
-            newView.setViews(1);
-            newView = viewsDao.persist(newView);
-
-        }
-        else {
-
-            view.setViews(view.getViews()+1);
-        }
-
-        return ok("view updated");
-
-    }
-    */
 
 
     @Transactional
     public Result updateViews(String imdbID) {
 
-
-       // final JsonNode jsonNode = request().body().asJson();
-        //final String imdbID = jsonNode.get("imdbID").asText();
-
         Views view=viewsDao.findById(imdbID);
 
 
@@ -89,23 +57,4 @@ public class ViewsController extends Controller{
         return ok("view updated");
 
     }
-
-
-
-   /* @Transactional
-    public Result getMostPopularByGenre(){
-
-
-         Map<String,Map> map = viewsDao.findViewsByGenre();
-         Collection<Map> map1 = map.values();
-         Map<String,Integer> map3=new TreeMap<String,Integer>(map1);
-
-
-
-        final JsonNode jsonNode = Json.toJson(map3);
-
-        return ok(jsonNode);
-
-
-    }*/
 }

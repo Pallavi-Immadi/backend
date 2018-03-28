@@ -43,7 +43,6 @@ public class AdminController extends Controller {
         final JsonNode jsonNode = request().body().asJson();
         final String username = jsonNode.get("username").asText();
         final String password = jsonNode.get("password").asText();
-        //final User.Role role= jsonNode ;
         final String ph = jsonNode.get("phone").asText();
         final String proname = jsonNode.get("proname").asText();
 
@@ -56,17 +55,13 @@ public class AdminController extends Controller {
         if (null == password) {
             return badRequest("Missing password");
         }
-        // if (null == role) {
-        //    return badRequest("Missing role");
-        //}
+
         if (null == ph) {
             return badRequest("Missing contact number");
         }
         if (null == proname) {
             return badRequest("Missing profile name");
         }
-
-
 
 
 

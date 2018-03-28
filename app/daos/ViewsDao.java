@@ -9,10 +9,7 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ViewsDao {
 
@@ -97,6 +94,19 @@ public class ViewsDao {
     }
 
 
+    public List<Movie> getMostPopular() {
+
+        TypedQuery<Views> query = jpaApi.em().createQuery("select v from Views v ORDER BY views DESC ", Views.class);
+        query.setMaxResults(15);
+        List<Views> result = query.getResultList();
+        List<Movie> movieList= new ArrayList<>();
+        for(Views v:result)
+        {
+            movieList.add(v.getImdbID());
+        }
+        return movieList;
+
+    }
 
 
 

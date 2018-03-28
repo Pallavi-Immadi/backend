@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.mail.smtp.SMTPMessage;
 import controllers.security.Authenticator;
 import controllers.security.IsAdmin;
+import daos.RatingsDao;
 import daos.UserDao;
 import models.TemporaryStorage;
 import models.User;
@@ -40,6 +41,7 @@ public class LoginController extends Controller {
 
     private JPAApi jpaApi;
     UserDao userDao;
+    RatingsDao ratingsDao;
     TemporaryStorage map = new TemporaryStorage();
 
 
@@ -79,21 +81,23 @@ public class LoginController extends Controller {
 
             String token = Utils.generateToken();
             User.Role userRole = user.getRole();
-            // Logger.debug(" user role {}" + userRole);
+
 
             String reftoken = Utils.generateToken();
             Long threshold = Utils.generateThreshold();
+            Boolean check = ratingsDao.findUserId(user.getId());
 
             String sql = "update User SET reftoken = '" + reftoken + "',threshold = '" + threshold + "',token = '" + token + "' where uname = '" + username + "';";
             Query query = em().createNativeQuery(sql);
             int updateCount = query.executeUpdate();
-            // Logger.debug("update count" + updateCount);
+
 
             ObjectNode result1 = Json.newObject();
             result1.put("access_token", token);
             result1.put("expiry_time", threshold);
             result1.put("refresh_token", reftoken);
             result1.put("role",user.getRole().toString());
+            result1.put("firstlogin",check);
 
             return ok(result1);
         } else

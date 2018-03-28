@@ -69,28 +69,21 @@ public class RatingsController extends Controller {
         return ok("rating added");
 
     }
+
+
     @Transactional
     @Authenticator
-    public Result findPersonalizedRecommendations(){
-
-        Calendar calendar = Calendar.getInstance();
-        Timestamp currentTime = new Timestamp(Calendar.getInstance().getTimeInMillis());
+    public Result findPersonalizedRecommendations() {
 
         User user = (User) ctx().args.get("user");
-        if(movieList.isEmpty() || currentTime.after(nextRefresh)) {
-            movieList.clear();
-            movieList = ratingsDao.findPositiveRatingsByUserID(user.getId());
-            lastRefresh.setTime(calendar.getTimeInMillis());
-        }
+        List<Movie> movieList = ratingsDao.findPositiveRatingsByUserID(user.getId());
 
         List<String> genreList = new ArrayList<>();
 
-        for(Movie movie : movieList)
-        {
-            String genre=movie.getGenre();
-            String[] genres=genre.split(", ");
-            for(String gen:genres)
-            {
+        for (Movie movie : movieList) {
+            String genre = movie.getGenre();
+            String[] genres = genre.split(", ");
+            for (String gen : genres) {
                 genreList.add(gen);
             }
 
@@ -98,19 +91,18 @@ public class RatingsController extends Controller {
 
         Map<String, Integer> map = new HashMap<>();
 
-        for(String genre:genreList){
+        for (String genre : genreList) {
 
-            if(map.containsKey(genre)){
-                Integer count=map.get(genre);
-                map.put(genre,count+1);
-            }
-            else{
-                map.put(genre,1);
+            if (map.containsKey(genre)) {
+                Integer count = map.get(genre);
+                map.put(genre, count + 1);
+            } else {
+                map.put(genre, 1);
             }
         }
 
-        Map<String,Double> score=new HashMap<>();
-        Map<String,ArrayList<String>> map1=ratingsDao.findAverageRatingsByGenre();
+        Map<String, Double> score = new HashMap<>();
+        Map<String, ArrayList<String>> map1 = ratingsDao.findAverageRatingsByGenre();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
@@ -137,16 +129,26 @@ public class RatingsController extends Controller {
             }
         });
         HashMap sortedHashMap = new LinkedHashMap();
-        int count=0;
-        for(Iterator it = list.iterator(); it.hasNext();) {
+        List<String> ratedMoviesList = ratingsDao.findRatingsByUserID(user.getId());
+
+        int count = 0;
+
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
-            if(count<10)
+            if ((!(ratedMoviesList.contains(entry.getKey())) && (count < 10)))
+            {
                 sortedHashMap.put(entry.getKey(), entry.getValue());
-            count++;
+                count++;
+            }
 
         }
 
-        final JsonNode json = Json.toJson(sortedHashMap.keySet());
+
+        List<Movie> movies=new ArrayList<>();
+        for(Object id:sortedHashMap.keySet())
+            movies.add(movieDao.findById(id.toString()));
+
+        final JsonNode json = Json.toJson(movies);
         return ok(json);
 
 
@@ -190,6 +192,16 @@ public class RatingsController extends Controller {
         final JsonNode jsonNode = Json.toJson(movieList);
         return ok(jsonNode);
 
+
+    }
+
+    @Transactional
+    @Authenticator
+    public Result ratedMovies() {
+        User user = (User) ctx().args.get("user");
+        List<String> ratedList = ratingsDao.findRatingsByUserID(user.getId());
+        final JsonNode json = Json.toJson(ratedList);
+        return ok(json);
 
     }
 

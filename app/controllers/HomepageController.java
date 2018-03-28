@@ -2,6 +2,10 @@ package controllers;
 
 import ch.qos.logback.classic.ViewStatusMessagesServlet;
 import com.fasterxml.jackson.databind.JsonNode;
+import daos.MovieDao;
+import daos.RatingsDao;
+import daos.UserDao;
+import daos.ViewsDao;
 import models.Movie;
 import models.User;
 import models.Views;
@@ -20,27 +24,25 @@ import java.util.List;
 
 public class HomepageController extends Controller {
     private JPAApi jpaApi;
+    private RatingsDao ratingsDao;
+    private ViewsDao viewsDao;
+    private MovieDao movieDao;
 
     @Inject
-    public HomepageController(JPAApi jpaApi) {
+    public HomepageController(JPAApi jpaApi, RatingsDao ratingsDao,ViewsDao viewsDao, MovieDao movieDao) {
         this.jpaApi = jpaApi;
+        this.ratingsDao = ratingsDao;
+        this.viewsDao=viewsDao;
+        this.movieDao = movieDao;
     }
+
 
     @Transactional
     public Result mostPopular() {
 
-        TypedQuery<Views> query = jpaApi.em().createQuery("select v from Views v ORDER BY views DESC ", Views.class);
-        query.setMaxResults(15);
-        List<Views> Result = query.getResultList();
-        Collection<Movie> movieList= new ArrayList<>();
-        for(Views v:Result)
-        {
-          movieList.add(v.getImdbID());
-        }
-
+        List<Movie> movieList = viewsDao.getMostPopular();
         final JsonNode jsonNode = Json.toJson(movieList);
         return ok(jsonNode);
-
 
     }
 
@@ -48,22 +50,34 @@ public class HomepageController extends Controller {
     @Transactional
     public Result latestMovies() {
 
-       TypedQuery<Movie> query = jpaApi.em().createQuery("select m from Movie m ORDER BY date DESC ", Movie.class);
-        query.setMaxResults(15);
-        List<Movie> Result = query.getResultList();
+        List<Movie> Result = movieDao.findLatestMovies();
         final JsonNode jsonNode = Json.toJson(Result);
         return ok(jsonNode);
     }
 
 
     @Transactional
-    public Result Reccomendations(){
+    public Result topRated(){
 
 
+        List<String> movies = ratingsDao.getTopRated();
+        List<Movie> result = new ArrayList<>();
+        List<String> finalList=new ArrayList<>();
+        int i=0;
+        for(String movie:movies)
+        {
+            if(i<10)
+            finalList.add(movie);
+            i++;
+        }
 
+        for(String mov:finalList)
+        {
+            result.add(movieDao.findById(mov));
+        }
 
-
-        return TODO;
+        final JsonNode jsonNode = Json.toJson(result);
+        return ok(jsonNode);
     }
 
 }

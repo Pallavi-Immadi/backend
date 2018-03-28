@@ -70,6 +70,14 @@ public class MovieDao{
         return movies;
     }
 
+    public List<Movie> findLatestMovies(){
+        TypedQuery<Movie> query = jpaApi.em().createQuery("select m from Movie m ORDER BY date DESC ", Movie.class);
+        query.setMaxResults(15);
+        List<Movie> results= query.getResultList();
+        return results;
+
+    }
+
 }
 
 

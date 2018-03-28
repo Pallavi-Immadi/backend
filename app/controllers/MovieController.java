@@ -71,7 +71,6 @@ public class MovieController extends Controller {
         final String poster = jsonNode.get("Poster").asText();
 
 
-
         Movie movie = new Movie();
         movie.setImdbID(imdbID);
         movie.setTitle(title);
@@ -94,21 +93,6 @@ public class MovieController extends Controller {
 
     }
 
-    @Transactional
-    @Authenticator
-    @IsAdmin
-    public Result deleteMovie(String imdbID){
-
-        Views views  = viewsDao.deleteViews(imdbID);
-
-        final Movie movie = movieDao.deleteMovie(imdbID);
-
-        if(null == movie){
-            return notFound("movie with the following imdbID not found"+imdbID);
-        }
-
-        return noContent();
-    }
 
     @Transactional
     public Result updateMovie(String imdbID){
@@ -128,6 +112,34 @@ public class MovieController extends Controller {
 
     }
 
+    @Transactional
+    @Authenticator
+    @IsAdmin
+
+    public Result deleteMovie(){
+
+        final JsonNode jsonNode = request().body().asJson();
+        if(jsonNode == null){
+            return  badRequest("cannot read from json as it is null");
+        }
+
+        String imdbID = jsonNode.get("imdbID").asText();
+        if(imdbID == null){
+            return badRequest("cannot delete movie without imdbID,Please enter the imdbID");
+        }
+
+
+
+        Views views  = viewsDao.deleteViews(imdbID);
+        Boolean ratings = ratingsDao.deleteRatings(imdbID);
+        final Movie movie = movieDao.deleteMovie(imdbID);
+
+        if(null == movie){
+            return notFound("movie with the following imdbID not found"+imdbID);
+        }
+
+        return noContent();
+    }
 
 
 

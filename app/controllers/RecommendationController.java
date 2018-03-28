@@ -34,12 +34,60 @@ public class RecommendationController extends Controller {
     {
 
         Map<Integer,HashMap<String,Double>> data=ratingsDao.getRatings();
-    return TODO;
+        Map<String, Map<String, Double>> diffMatrix;
+        Map<String, Map<String, Integer>> freqMatrix;
+        diffMatrix = new HashMap<>();
+        freqMatrix = new HashMap<>();
+        // building Matrices
+        for (Map<String, Double> user : data.values())
+        {
+            // then iterate through user data
+            for (Map.Entry<String, Double> entry : user.entrySet())
+            {
+                String i1 = entry.getKey();
+                double r1 = entry.getValue();
+
+                if (!diffMatrix.containsKey(i1))
+                {
+                    diffMatrix.put(i1, new HashMap<String, Double>());
+                    freqMatrix.put(i1, new HashMap<String, Integer>());
+                }
+
+                for (Map.Entry<String, Double> entry2 : user.entrySet())
+                {
+                    String i2 = entry2.getKey();
+                    double r2 = entry2.getValue();
+
+                    int cnt = 0;
+                    if (freqMatrix.get(i1).containsKey(i2)) cnt = freqMatrix.get(i1).get(i2);
+                    double diff = 0.0;
+                    if (diffMatrix.get(i1).containsKey(i2)) diff = diffMatrix.get(i1).get(i2);
+                    double new_diff = r1 - r2;
+
+                    freqMatrix.get(i1).put(i2, cnt + 1);
+                    diffMatrix.get(i1).put(i2, diff + new_diff);
+                }
+            }
+        }
+        for (String j : diffMatrix.keySet())
+        {
+            for (String i : diffMatrix.get(j).keySet())
+            {
+                Double oldvalue = diffMatrix.get(j).get(i);
+                int count = freqMatrix.get(j).get(i).intValue();
+                diffMatrix.get(j).put(i, oldvalue / count);
+            }
+        }
 
 
-        //final JsonNode json = Json.toJson(map);
-        //return ok(json);
+
+
+
+
+        final JsonNode json = Json.toJson(diffMatrix);
+        return ok(json);
 
     }
+
 
 }

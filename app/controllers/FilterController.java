@@ -52,16 +52,6 @@ public class FilterController extends Controller {
     }
 
 
-    /*public Movie findByimdbID(String imdbID) {
-
-        final Movie movie = jpaApi.em().find(Movie.class, imdbID);
-        return movie;
-    }
-    */
-
-
-
-
     @Transactional
     public Result findByLanguage() {
 
@@ -156,10 +146,6 @@ public class FilterController extends Controller {
         List<Predicate> genres = new ArrayList<Predicate>();
 
         List<Predicate> languages = new ArrayList<Predicate>();
-
-        //genres.add(builder.like(movie.get("genre"),"Action"));
-        //genres.add(builder.like(movie.get("genre"),"Comedy"));
-        //genres.add(builder.like(movie.get("language"),"English"));
 
         for (String name : names) {
 

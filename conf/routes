@@ -57,8 +57,8 @@ POST    /genre                      controllers.FilterController.findByGenre()
 #Homepage Controller
 
 GET /getLatestMovies                controllers.HomepageController.latestMovies()
-GET /getPopularMovies               controllers.RatingsController.mostPopular()
-
+GET /getPopularMovies               controllers.HomepageController.mostPopular()
+GET /getTopRated                    controllers.HomepageController.topRated()
 
 #Views Controller
 PUT /updateViews/:imdbID            controllers.ViewsController.updateViews(imdbID:String)
@@ -69,7 +69,7 @@ PUT /updateViews/:imdbID            controllers.ViewsController.updateViews(imdb
 POST /insertRatings                 controllers.RatingsController.insertRatings()
 +nocsrf
 GET /getRecommendations             controllers.RatingsController.findPersonalizedRecommendations()
-GET /mostPopular                    controllers.RatingsController.mostPopular()
+#GET /mostPopular                    controllers.RatingsController.mostPopular()
 
 
 # ImageController
@@ -85,6 +85,6 @@ POST      /contact                            controllers.ContactController.send
 
 #Recommendation Controller
 GET /generateRecommendations                 controllers.RecommendationController.generateRecommendations()
-
+#GET /buildDiffMatrix                         controllers.RecommendationController.buildDiffMatrix()
 
 

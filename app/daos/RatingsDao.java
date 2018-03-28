@@ -40,10 +40,10 @@ public class RatingsDao {
 
 
 
-    public List<Movie> findRatingsByUserID(Integer userid) {
+    public List<Movie> findByUserID(Integer userid) {
 
 
-        Query query = jpaApi.em().createQuery("select r from Ratings r where userid='" +userid+ "'");
+        TypedQuery<Ratings> query = jpaApi.em().createQuery("select r from Ratings r where userid='" +userid+ "'",Ratings.class);
 
         List<Ratings> Result = query.getResultList();
 
@@ -210,6 +210,95 @@ public class RatingsDao {
         return tempRating;
 
     }
+
+    public List<String> getTopRated()
+    {
+        List<Ratings> ratings = findAll();
+        List<String> movies=new ArrayList<>();
+        Map<String,Float> map=new HashMap<>();
+        for(Ratings r:ratings)
+        {
+            map.put(r.getMovieId(),getAverageRating(r.getMovieId()));
+
+        }
+        List<Map.Entry<String, Float>> list = new ArrayList<>(map.entrySet());
+        list.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+
+        Map<String, Float> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Float> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        movies.addAll(result.keySet());
+
+        Logger.debug(result+"");
+        return movies;
+
+
+
+    }
+
+    public List<String> findRatingsByUserID(Integer userid) {
+
+        Query query = jpaApi.em().createQuery("select r from Ratings r where userid=" +userid);
+
+        List<Ratings> Result = query.getResultList();
+
+        List<String> movieList=new ArrayList<>();
+        for(Ratings ratings:Result)
+        {
+            movieList.add(ratings.getMovieId());
+
+        }
+
+        return movieList;
+
+    }
+
+    public boolean findUserId(Integer userId){
+
+        Boolean result;
+
+        TypedQuery<Ratings> query = jpaApi.em().createQuery("SELECT r FROM Ratings r where userId="+userId, Ratings.class);
+        List<Ratings> ratings = query.getResultList();
+
+        if(ratings.isEmpty())
+            result=true;
+        else
+            result=false;
+
+        return result;
+
+    }
+
+    public List<Ratings> findByMovieId(String imdbID) {
+
+
+        Query query = jpaApi.em().createQuery("select r from Ratings r where movieId='"+imdbID+"'");
+        List<Ratings> ratings = query.getResultList();
+
+
+        return ratings;
+
+    }
+
+
+    public Boolean deleteRatings(String imdbID) {
+
+        final List<Ratings> ratings  = findByMovieId(imdbID);
+
+        if (null == ratings) {
+            return null;
+        }
+
+
+        for (Ratings r:ratings) {
+
+            jpaApi.em().remove(r);
+        }
+
+        return true;
+    }
+
 
 
 
