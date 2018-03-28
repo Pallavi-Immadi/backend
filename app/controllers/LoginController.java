@@ -299,6 +299,51 @@ public class LoginController extends Controller {
         return  ok("Successfully reset the password!!!!!");
     }
 
+    @Transactional
+    @Authenticator
+    public Result logout() {
+
+        session().clear();
+        User user = (User) ctx().args.get("user");
+        user.setToken(null);
+        user.setReftoken(null);
+        user.setThreshold(null);
+
+        return ok("Logged out successfully");
+    }
+
+    @Transactional
+    public Result resetAccessToken(){
+
+        final JsonNode jsonNode = request().body().asJson();
+        final String refreshToken = jsonNode.get("refresh_token").asText();
+
+        User user = userDao.findByRefreshToken(refreshToken);
+
+        if( user.getReftoken().equals(refreshToken) ){
+
+            String accessToken = Utils.generateToken();
+            user.setToken(accessToken);
+
+            Long expiryTime = Utils.generateThreshold();
+            user.setThreshold(expiryTime);
+
+            userDao.persist(user);
+
+            com.fasterxml.jackson.databind.node.ObjectNode result = Json.newObject();
+            result.put("access_token" , accessToken);
+            result.put("token_expiry" , expiryTime);
+            result.put("refresh_token" , refreshToken);
+            result.put("role",user.getRole().toString());
+
+            return ok(result);
+
+        }
+
+        return badRequest();
+    }
+
+
 
 
 }

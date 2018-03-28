@@ -26,6 +26,7 @@ GET /reftoken/:reftoken               controllers.LoginController.verifyRefreshT
 PUT /changepwd                        controllers.LoginController.changePassword()
 GET /user/forgotP/:uname              controllers.LoginController.forgotPassword(uname: String)
 POST /resetPwd                        controllers.LoginController.resetPassword()
+POST /resetToken                        controllers.LoginController.resetAccessToken()
 
 #HelloWorld
 GET     /HelloWorld                   controllers.HelloworldController.HelloWorld
@@ -40,7 +41,7 @@ GET /me         controllers.HelloworldController.me()
 +nocsrf
 POST    /movie                       controllers.MovieController.createMovie()
 +noscrf
-DELETE /movie/:imdbID                controllers.MovieController.deleteMovie(imdbID:String)
+DELETE /movie                controllers.MovieController.deleteMovie()
 GET /movies                          controllers.MovieController.getAllMovies()
 +nocsrf
 POST /singlemovie                    controllers.MovieController.getMovieByID()
@@ -49,8 +50,8 @@ POST /singlemovie                    controllers.MovieController.getMovieByID()
 #Filter
 
 POST    /title                      controllers.FilterController.findByTitle()
-POST    /filter                     controllers.FilterController.filter()
-POST    /language                   controllers.FilterController.dynamicQuery()
+#POST    /filter                     controllers.FilterController.filter()
+POST    /filter                 controllers.FilterController.dynamicQuery()
 POST    /genre                      controllers.FilterController.findByGenre()
 
 
@@ -61,7 +62,7 @@ GET /getPopularMovies               controllers.HomepageController.mostPopular()
 GET /getTopRated                    controllers.HomepageController.topRated()
 
 #Views Controller
-PUT /updateViews/:imdbID            controllers.ViewsController.updateViews(imdbID:String)
+#PUT /updateViews/:imdbID            controllers.ViewsController.updateViews(imdbID:String)
 #GET /getMostPopularByGenre         controllers.ViewsController.getMostPopularByGenre()
 
 #Ratingscontroller

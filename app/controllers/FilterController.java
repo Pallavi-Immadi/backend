@@ -103,25 +103,7 @@ public class FilterController extends Controller {
     }
 
 
-    public Result filter() {
 
-
-        final JsonNode jsonNode = request().body().asJson();
-        final Iterator<String> itr = jsonNode.fieldNames();
-
-        while (itr.hasNext()) {
-
-          String parameters= itr.next();
-
-            System.out.print(parameters + "\n");
-
-        }
-
-        final JsonNode jsonNode1 = Json.toJson(itr);
-        return ok(jsonNode1);
-
-
-    }
 
     @Transactional
    public Result dynamicQuery(){
